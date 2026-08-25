@@ -26,6 +26,7 @@ const routeModules = [
   require('../server/routes/customerQuotations'),
   require('../server/routes/orders'),
   require('../server/routes/dashboard'),
+  require('../server/routes/whatsapp'),
 ];
 for (const mod of routeModules) {
   root.routes.push(...mod.routes);
