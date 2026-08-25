@@ -1,0 +1,17 @@
+{
+  "name": "veyrona",
+  "version": "0.1.0",
+  "description": "Veyrona AI procurement platform — MVP foundation (Node.js)",
+  "main": "server/index.js",
+  "engines": { "node": ">=22.5.0" },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4"
+  },
+  "license": "UNLICENSED",
+  "private": true
+}

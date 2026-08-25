@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "env": {
+    "DATABASE_URL": "postgresql://neondb_owner:npg_SljTH8RPx5Nc@ep-empty-cake-axnqibfw-pooler.c-4.us-east-2.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
+  },
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "/api/[...path]" }
+  ]
+}
