@@ -124,18 +124,69 @@ window.addEventListener('DOMContentLoaded', render);
    SHELL (sidebar + topbar) — wraps every authenticated view
    ========================================================================= */
 const NAV = [
-  { group: 'Overview', items: [{ href: '#/dashboard', label: 'Dashboard', icon: '◧' }] },
-  { group: 'Pipeline', items: [
-    { href: '#/requests', label: 'Procurement Requests', icon: '☰' },
-    { href: '#/rfqs', label: 'RFQs & Quotations', icon: '⇄' },
-    { href: '#/quotations', label: 'Customer Quotations', icon: '▤' },
-    { href: '#/orders', label: 'Orders', icon: '▣' },
-  ]},
-  { group: 'Network', items: [
-    { href: '#/customers', label: 'Customers', icon: '◔' },
-    { href: '#/suppliers', label: 'Suppliers', icon: '◑' },
-  ]},
-  { group: 'Governance', items: [{ href: '#/audit', label: 'Audit Log', icon: '≣' }] },
+  {
+    group: 'overview',
+    items: [
+      {
+        href: '#/dashboard',
+        labelKey: 'dashboard',
+        icon: '◧'
+      }
+    ]
+  },
+
+  {
+    group: 'pipeline',
+    items: [
+      {
+        href: '#/requests',
+        labelKey: 'procurementRequests',
+        icon: '☰'
+      },
+      {
+        href: '#/rfqs',
+        labelKey: 'rfqsQuotations',
+        icon: '⇄'
+      },
+      {
+        href: '#/quotations',
+        labelKey: 'customerQuotations',
+        icon: '▤'
+      },
+      {
+        href: '#/orders',
+        labelKey: 'orders',
+        icon: '▣'
+      }
+    ]
+  },
+
+  {
+    group: 'network',
+    items: [
+      {
+        href: '#/customers',
+        labelKey: 'customers',
+        icon: '◔'
+      },
+      {
+        href: '#/suppliers',
+        labelKey: 'suppliers',
+        icon: '◑'
+      }
+    ]
+  },
+
+  {
+    group: 'governance',
+    items: [
+      {
+        href: '#/audit',
+        labelKey: 'auditLog',
+        icon: '≣'
+      }
+    ]
+  }
 ];
 
 async function shell(app, { title, crumb, badges = {} }) {
@@ -150,10 +201,12 @@ async function shell(app, { title, crumb, badges = {} }) {
       </div>
       ${NAV.map((g) => `
         <div class="nav-group">
-          <div class="nav-label">${esc(g.group)}</div>
+          <div class="nav-label">
+  ${esc(I18N.t(g.group))}
+</div>
           ${g.items.map((item) => `
             <a class="nav-link ${currentHash.startsWith(item.href.slice(1)) ? 'active' : ''}" href="${item.href}">
-              <span>${item.icon} &nbsp;${esc(item.label)}</span>
+              <span>${item.icon} &nbsp;${esc(I18N.t(item.labelKey))}</span>
               ${badges[item.href] ? `<span class="nav-badge">${badges[item.href]}</span>` : ''}
             </a>`).join('')}
         </div>`).join('')}
@@ -171,7 +224,15 @@ async function shell(app, { title, crumb, badges = {} }) {
           ${crumb ? `<div class="crumb">${esc(crumb)}</div>` : ''}
           <h1>${esc(title)}</h1>
         </div>
-        <button class="menu-toggle" id="menu-toggle">☰</button>
+        <div class="topbar-actions">
+
+  ${languageSwitcher()}
+
+  <button class="menu-toggle" id="menu-toggle">
+    ☰
+  </button>
+
+</div>
       </div>
       <div class="content" id="view-content"></div>
     </div>
@@ -181,6 +242,7 @@ async function shell(app, { title, crumb, badges = {} }) {
   wrap.appendChild(main);
   app.appendChild(wrap);
   sidebar.querySelector('#logout-btn').addEventListener('click', () => API.logout());
+initLanguageSwitcher();
   main.querySelector('#menu-toggle').addEventListener('click', () => wrap.classList.toggle('nav-open'));
   return main.querySelector('#view-content');
 }
@@ -207,6 +269,9 @@ route('/login', async (params, app) => {
   const wrap = h(`
     <div class="login-screen">
       <div class="login-card">
+<div class="login-language">
+  ${languageSwitcher()}
+</div>
 
         <div class="login-brand">
           <div class="brand-mark">VEY<span>RONA</span></div>
@@ -286,6 +351,7 @@ route('/login', async (params, app) => {
   `);
 
   app.appendChild(wrap);
+initLanguageSwitcher();
 
   let selectedRole = 'customer';
 
