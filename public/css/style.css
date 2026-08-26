@@ -458,3 +458,107 @@ textarea { resize: vertical; min-height: 80px; }
 
 .subtle-list { list-style: none; margin: 0; padding: 0; font-size: 13px; color: var(--text-dim); }
 .subtle-list li { padding: 5px 0; border-bottom: 1px solid var(--border-soft); }
+
+/* =========================================================
+   VEYRONA — ROLE LOGIN OPTIONS
+   Customer / Supplier / Veyrona Admin
+   ========================================================= */
+
+.role-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 18px 0 14px;
+}
+
+.role-option {
+  border: 1px solid var(--border);
+  background: var(--surface-raised);
+  color: var(--text);
+  border-radius: var(--radius-lg);
+  padding: 12px 8px;
+  cursor: pointer;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    transform 0.1s ease;
+}
+
+.role-option:hover {
+  border-color: var(--copper);
+  background: rgba(193, 101, 47, 0.08);
+}
+
+.role-option:active {
+  transform: translateY(1px);
+}
+
+.role-option span {
+  font-size: 21px;
+  line-height: 1;
+}
+
+.role-option strong {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.role-option small {
+  font-size: 10px;
+  color: var(--text-faint);
+  line-height: 1.3;
+}
+
+.role-option.active {
+  border-color: var(--copper);
+  background: rgba(193, 101, 47, 0.12);
+  box-shadow: 0 0 0 1px rgba(193, 101, 47, 0.15);
+}
+
+.login-selected {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  color: var(--copper-bright);
+  margin-bottom: 12px;
+}
+
+.login-hint {
+  margin-top: 12px;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+/* Mobile layout */
+@media (max-width: 600px) {
+  .role-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .role-option {
+    flex-direction: row;
+    text-align: left;
+    padding: 12px;
+  }
+
+  .role-option span {
+    width: 32px;
+    text-align: center;
+  }
+
+  .role-option small {
+    margin-left: auto;
+    max-width: 150px;
+    text-align: right;
+  }
+}
