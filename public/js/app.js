@@ -200,6 +200,182 @@ function pipelineRail(activeStep) {
 /* =========================================================================
    LOGIN
    ========================================================================= */
+/* =========================================================================
+   LOGIN — CUSTOMER / SUPPLIER / VEYRONA ADMIN
+   ========================================================================= */
+route('/login', async (params, app) => {
+  const wrap = h(`
+    <div class="login-screen">
+      <div class="login-card">
+
+        <div class="login-brand">
+          <div class="brand-mark">VEY<span>RONA</span></div>
+          <span class="brand-sub">AI Procurement Platform</span>
+        </div>
+
+        <div class="role-selector">
+
+          <button type="button"
+                  class="role-option active"
+                  data-role="customer">
+            <span>👤</span>
+            <strong>Customer</strong>
+            <small>Request & manage procurement</small>
+          </button>
+
+          <button type="button"
+                  class="role-option"
+                  data-role="supplier">
+            <span>🏭</span>
+            <strong>Supplier</strong>
+            <small>RFQs & quotations</small>
+          </button>
+
+          <button type="button"
+                  class="role-option"
+                  data-role="admin">
+            <span>🛡</span>
+            <strong>Veyrona Admin</strong>
+            <small>Manage the platform</small>
+          </button>
+
+        </div>
+
+        <div class="login-selected" id="login-selected">
+          Customer Portal
+        </div>
+
+        <form id="login-form" class="stack">
+
+          <div class="field">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+
+          <button
+            class="btn btn-primary"
+            type="submit"
+            style="width:100%"
+          >
+            Sign in
+          </button>
+
+        </form>
+
+        <div class="login-hint" id="login-hint">
+          Use the Customer option to access your procurement portal.
+        </div>
+
+      </div>
+    </div>
+  `);
+
+  app.appendChild(wrap);
+
+  let selectedRole = 'customer';
+
+  const labels = {
+    customer: [
+      'Customer Portal',
+      'Use your account to manage procurement requests, quotations and orders.'
+    ],
+
+    supplier: [
+      'Supplier Portal',
+      'Receive RFQs, submit quotations and manage supplier orders.'
+    ],
+
+    admin: [
+      'Veyrona Admin',
+      'Manage customers, suppliers, RFQs, quotations and orders.'
+    ]
+  };
+
+  wrap.querySelectorAll('.role-option').forEach(button => {
+
+    button.addEventListener('click', () => {
+
+      selectedRole = button.dataset.role;
+
+      wrap.querySelectorAll('.role-option')
+        .forEach(option => {
+          option.classList.toggle(
+            'active',
+            option === button
+          );
+        });
+
+      wrap.querySelector('#login-selected').textContent =
+        labels[selectedRole][0];
+
+      wrap.querySelector('#login-hint').textContent =
+        labels[selectedRole][1];
+    });
+
+  });
+
+  wrap.querySelector('#login-form').addEventListener(
+    'submit',
+    async (event) => {
+
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+
+      await guarded(async () => {
+
+        const data = await API.post('/auth/login', {
+          email: formData.get('email'),
+          password: formData.get('password')
+        });
+
+        if (!data.user) {
+          throw new Error('Invalid login response.');
+        }
+
+        /*
+         * Make sure the account's REAL database role
+         * matches the portal selected by the user.
+         */
+        if (data.user.role !== selectedRole) {
+          throw new Error(
+            `This account is registered as ${data.user.role}. ` +
+            `Please select the correct login option.`
+          );
+        }
+
+        API.setSession(
+          data.token,
+          data.user
+        );
+
+        toast(
+          `Welcome, ${data.user.name || ''}`,
+          'success'
+        );
+
+        location.hash = '#/dashboard';
+      });
+
+    }
+  );
+});
+
 route('/login', async (params, app) => {
   const wrap = h(`
     <div class="login-screen">
