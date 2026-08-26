@@ -373,16 +373,109 @@ textarea { resize: vertical; min-height: 80px; }
 .pipeline-wire { flex: 1; min-width: 18px; height: 1px; background: repeating-linear-gradient(90deg, var(--border) 0 6px, transparent 6px 10px); }
 .pipeline-wire.done { background: repeating-linear-gradient(90deg, var(--patina) 0 6px, transparent 6px 10px); opacity: 0.6; }
 
-/* Login screen */
+/* =========================================================
+   VEYRONA LOGIN — MINING + AGRICULTURE BACKGROUND
+   ========================================================= */
+
 .login-screen {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+
+  padding: 24px;
+
   background:
-    radial-gradient(circle at 20% 20%, rgba(193,101,47,0.10), transparent 45%),
-    radial-gradient(circle at 80% 80%, rgba(78,138,111,0.08), transparent 45%),
-    var(--bg);
+    linear-gradient(
+      90deg,
+      rgba(8, 12, 14, 0.84) 0%,
+      rgba(8, 12, 14, 0.70) 42%,
+      rgba(8, 12, 14, 0.45) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(14, 18, 20, 0.12),
+      rgba(14, 18, 20, 0.65)
+    ),
+    url("https://mjconsultants.co.zm/images/blog/key-sectors-to-target-in-zambia-consultancy-opportunities-in-agriculture-mining-and-energy-for-smes-1024x683.png")
+    center center / cover no-repeat;
+}
+
+/* Atmospheric colour treatment */
+.login-screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  z-index: -1;
+
+  background:
+    radial-gradient(
+      circle at 18% 20%,
+      rgba(193, 101, 47, 0.18),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 82% 78%,
+      rgba(78, 138, 111, 0.18),
+      transparent 38%
+    );
+
+  pointer-events: none;
+}
+
+/* Bottom identity line */
+.login-screen::after {
+  content: "MINING  •  AGRICULTURE  •  PROCUREMENT";
+
+  position: absolute;
+  left: 28px;
+  bottom: 20px;
+
+  color: rgba(232, 228, 220, 0.48);
+
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+
+  z-index: -1;
+}
+
+/* Glass login panel */
+.login-card {
+  width: min(410px, 100%);
+
+  background: rgba(20, 23, 26, 0.91);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(232, 228, 220, 0.16);
+
+  border-radius: 14px;
+
+  padding: 34px 32px;
+
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(193, 101, 47, 0.05);
+}
+
+/* Mobile */
+@media (max-width: 560px) {
+
+  .login-screen {
+    padding: 14px;
+  }
+
+  .login-card {
+    padding: 26px 20px;
+  }
+
 }
 .login-card {
   width: 380px;
