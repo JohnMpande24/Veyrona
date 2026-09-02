@@ -6,6 +6,20 @@ const { requireAuth, requirePermission } = require('../lib/middleware');
 
 const router = new Router();
 
+router.get('/api/suppliers/me', requireAuth, async (req, res) => {
+  if (req.user.role !== 'supplier') return res.error(403, 'Supplier portal access required');
+  const supplier = await db.get('SELECT * FROM suppliers WHERE LOWER(email) = LOWER(?) LIMIT 1', [req.user.email]);
+  if (!supplier) return res.error(404, 'No supplier profile is linked to this login');
+  const contacts = await db.all('SELECT * FROM supplier_contacts WHERE supplier_id = ?', [supplier.id]);
+  const products = await db.all(
+    `SELECT sp.*, p.name AS product_name FROM supplier_products sp
+     JOIN products p ON p.id = sp.product_id
+     WHERE sp.supplier_id = ?`,
+    [supplier.id]
+  );
+  res.json({ supplier, contacts, products });
+});
+
 router.get('/api/suppliers', requireAuth, async (req, res) => {
   const { category, status } = req.query;
   let sql = 'SELECT * FROM suppliers WHERE 1=1';
@@ -30,7 +44,6 @@ router.get('/api/suppliers/:id', requireAuth, async (req, res) => {
 router.post('/api/suppliers', requireAuth, requirePermission('supplier.manage'), async (req, res) => {
   const { name, category, location, country, email, phone, whatsapp_number } = req.body || {};
   if (!name) return res.error(400, 'name is required');
-  // New suppliers require approval per Section 19 (human-in-the-loop) — status starts 'pending'.
   const info = await db.run(
     `INSERT INTO suppliers (name, category, location, country, email, phone, whatsapp_number, status)
      VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')`,
@@ -54,9 +67,6 @@ router.put('/api/suppliers/:id', requireAuth, requirePermission('supplier.manage
   res.json({ supplier: after });
 });
 
-// Explicit status/approval endpoint — kept separate from generic update so
-// approval, suspension and blacklist actions are always individually
-// audited and gated by the supplier.approve permission (Section 11/19).
 router.post('/api/suppliers/:id/status', requireAuth, requirePermission('supplier.approve'), async (req, res) => {
   const { status, reason } = req.body || {};
   const allowed = ['pending', 'approved', 'suspended', 'blacklisted'];
