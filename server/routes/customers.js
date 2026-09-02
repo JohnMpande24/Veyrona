@@ -6,6 +6,14 @@ const { requireAuth, requirePermission } = require('../lib/middleware');
 
 const router = new Router();
 
+router.get('/api/customers/me', requireAuth, async (req, res) => {
+  if (req.user.role !== 'customer') return res.error(403, 'Customer portal access required');
+  const customer = await db.get('SELECT * FROM customers WHERE LOWER(email) = LOWER(?) LIMIT 1', [req.user.email]);
+  if (!customer) return res.error(404, 'No customer profile is linked to this login');
+  const contacts = await db.all('SELECT * FROM customer_contacts WHERE customer_id = ?', [customer.id]);
+  res.json({ customer, contacts });
+});
+
 router.get('/api/customers', requireAuth, async (req, res) => {
   const rows = await db.all('SELECT * FROM customers ORDER BY created_at DESC');
   res.json({ customers: rows });
